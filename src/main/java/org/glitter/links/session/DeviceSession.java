@@ -1,5 +1,6 @@
 package org.glitter.links.session;
 
+import org.glitter.links.device.DeviceOperator;
 import org.glitter.links.message.EncodedMessage;
 import reactor.core.publisher.Mono;
 
@@ -15,6 +16,9 @@ public interface DeviceSession {
      * return 会话ID
      * */
     String getId();
+
+
+    DeviceOperator getDeviceOperator();
 
     /**
      * 设备ID
@@ -33,8 +37,12 @@ public interface DeviceSession {
      * */
     long createTime();
 
+    boolean ping();
+
     /**
      * 发送消息给会话
      * */
     Mono<Boolean> send(EncodedMessage encodedMessage);
+
+    boolean isAlive();
 }
