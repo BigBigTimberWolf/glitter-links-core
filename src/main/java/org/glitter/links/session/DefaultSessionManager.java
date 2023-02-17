@@ -1,6 +1,7 @@
 package org.glitter.links.session;
 
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,16 +16,16 @@ public class DefaultSessionManager implements SessionManager{
 
 
     @Override
-    public DeviceSession getSession(String idOrDeviceId) {
+    public Flux<DeviceSession> getSession(String idOrDeviceId) {
         DeviceSession session = repository.get(idOrDeviceId);
         if (session == null || !session.isAlive()) {
-            return null;
+            return Flux.empty();
         }
-        return session;
+        return Flux.just(session);
     }
 
     @Override
-    public DeviceSession register(DeviceSession session) {
+    public Flux<DeviceSession> register(DeviceSession session) {
         DeviceSession old = repository.put(session.getDeviceId(), session);
         if (old != null) {
             //清空sessionId不同
@@ -35,11 +36,11 @@ public class DefaultSessionManager implements SessionManager{
         if (!session.getId().equals(session.getDeviceId())) {
             repository.put(session.getId(), session);
         }
-        return session;
+        return Flux.just(session);
     }
 
     @Override
-    public DeviceSession unregister(String idOrDeviceId) {
+    public Flux<DeviceSession> unregister(String idOrDeviceId) {
         return null;
     }
 
