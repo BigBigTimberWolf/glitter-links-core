@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.glitter.links.Value;
 import org.glitter.links.Values;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -16,6 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @date 2023/2/20
  */
 @Slf4j
+@Component
 public class EventStream {
 
     // <设备id,<测点,List(事件)>>
