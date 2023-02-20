@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
  * @author Xiaohan.Yuan
  * @date 2023/2/2
  */
-public interface NetworkProvider<T extends NetworkProperty.config> {
+public interface NetworkProvider {
 
 
     /**
@@ -21,20 +21,20 @@ public interface NetworkProvider<T extends NetworkProperty.config> {
      * @param config  创建网关所需要的配置信息
      * @return 已经创建连接的网关
      * */
-    Network createNetwork(T config);
+    Network createNetwork(NetworkProperty.config config);
 
     /**
      * @param config 新的配置文件
      * @param network 会对当前network进行重载配置
      * */
-    void reload(Network network,T config);
+    void reload(Network network,NetworkProperty.config config);
 
 
     /**
      * @param properties 网关的统一数据格式
      * @return  网关类型的特定实现类，使用类可以创建对应网关
      * */
-    Mono<T> createConfig(NetworkProperty properties);
+    Mono<NetworkProperty.config> createConfig(NetworkProperty properties);
 
 
 

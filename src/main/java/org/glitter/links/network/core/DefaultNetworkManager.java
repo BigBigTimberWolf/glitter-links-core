@@ -13,13 +13,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2023/2/2
  */
 @Component
-public class DefaultNetworkManager<T extends NetworkProperty.config> implements NetworkManager, BeanPostProcessor {
+public class DefaultNetworkManager implements NetworkManager, BeanPostProcessor {
 
     private final NetworkConfigManager networkConfigManager;
 
     private final Map<String, Map<String, Network>> store = new ConcurrentHashMap<>();
 
-    private final Map<String, NetworkProvider<T>> providerSupport = new ConcurrentHashMap<>();
+    private final Map<String, NetworkProvider> providerSupport = new ConcurrentHashMap<>();
 
     public DefaultNetworkManager(NetworkConfigManager networkConfigManager) {
         this.networkConfigManager = networkConfigManager;
@@ -68,9 +68,9 @@ public class DefaultNetworkManager<T extends NetworkProperty.config> implements 
         ;
     }
 
-    public Network createNetwork(NetworkProvider<T> networkProvider,
+    public Network createNetwork(NetworkProvider networkProvider,
                                  String id,
-                                 T config
+                                 NetworkProperty.config config
                                  ){
         return getNetworksByType(networkProvider.getType().name).compute(id,(s,network)->{
             if (network==null){
@@ -83,14 +83,14 @@ public class DefaultNetworkManager<T extends NetworkProperty.config> implements 
 
     }
 
-    public void register(NetworkProvider<T> provider) {
+    public void register(NetworkProvider provider) {
         this.providerSupport.put(provider.getType().name, provider);
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof NetworkProvider) {
-            register(((NetworkProvider<T>) bean));
+            register(((NetworkProvider) bean));
         }
         return bean;
     }
