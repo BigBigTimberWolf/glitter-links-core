@@ -13,11 +13,12 @@ public class EqualTrigger implements Trigger {
 
     boolean must;
 
-    boolean status = false;
+    boolean status = true;
 
     @Getter
     @Setter
     Object value;
+
 
     /**
      * 如果被执行了一次，该触发器将不会被触发，
@@ -47,12 +48,12 @@ public class EqualTrigger implements Trigger {
 
     @Override
     public Boolean check(Value value) {
-       if (this.status != (this.value == value.get() ||
-               this.value.equals(value.asString()))){
-           this.execStatus = true;
-       }
-        this.status = this.value == value.get() ||
+        boolean status = this.value == value.get() ||
                 this.value.equals(value.asString());
+
+        this.execStatus = this.status != status;
+
+        this.status = status;
         return this.status;
     }
 }

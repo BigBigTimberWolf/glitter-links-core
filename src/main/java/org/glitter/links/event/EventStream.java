@@ -51,7 +51,7 @@ public class EventStream {
             long mustNumber = allTrigger.stream().filter(Trigger::must).count();
 
             long fMust = allTrigger.stream().filter(Trigger::must) // 必须满足的
-                    .filter(Trigger::execStatus)
+                    /*.filter(Trigger::execStatus)*/
                     .filter(Trigger::getStatus)
                     .count();
             if (mustNumber != 0 && fMust != mustNumber) {
@@ -59,13 +59,16 @@ public class EventStream {
             }
 
             long tNMust = allTrigger.stream().filter(trigger -> !trigger.must())
-                    .filter(Trigger::execStatus)
+                    /*.filter(Trigger::execStatus)*/
                     .filter(Trigger::getStatus)
                     .count();
             if (allTrigger.stream().anyMatch(trigger -> !trigger.must()) && tNMust == 0) {
                 continue;
             }
-            finalExecEventSet.add(execEvent);
+            if (eventStore.get(execEvent.getId()).getExecStatus()){
+                finalExecEventSet.add(execEvent);
+            }
+            eventStore.get(execEvent.getId()).setExecStatus(false);
         }
 
         List<Event> events = new ArrayList<>(finalExecEventSet.stream().toList());
@@ -75,17 +78,20 @@ public class EventStream {
 
     }
 
-    public void touch(String deviceId, String propertyName, Value value) {
+    private void touch(String deviceId, String propertyName, Value value) {
         if (!eventListen.containsKey(deviceId)) {
-            return;
+            return ;
         }
         if (!eventListen.get(deviceId).containsKey(propertyName)) {
-            return;
+            return ;
         }
         List<Event> events = eventListen.get(deviceId).get(propertyName);
         for (Event event : events) {
             Trigger trigger = event.getTrigger().get(deviceId).get(propertyName);
-            trigger.check(value);
+            // 先判断可执行状态，当check返回true后，会将status置为false
+            if (trigger.execStatus()&trigger.check(value)){
+                eventStore.get(event.getId()).setExecStatus(true);
+            }
         }
     }
 
@@ -107,7 +113,7 @@ public class EventStream {
         }
     }
 
-    public void setEventListen(String deviceId, String propertyName, String eventId) {
+    private void setEventListen(String deviceId, String propertyName, String eventId) {
         if (!eventStore.containsKey(eventId)) {
             throw new RuntimeException(StrUtil.format("不存在的事件id:{}", eventId));
         }

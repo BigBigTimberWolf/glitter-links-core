@@ -2,6 +2,7 @@ package org.glitter.links.event;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.glitter.links.Value;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,8 +30,16 @@ public class Event implements Comparable<Event> {
     @Setter
     @Getter
     private Integer order;
+
+    @Getter
+    @Setter
+    private Value value;
     @Getter
     private final Map<String, Map<String,Trigger>> trigger = new ConcurrentHashMap<>(64);
+
+    @Getter
+    @Setter
+    private Boolean execStatus = true;
 
 
     public Set<Trigger> getAllTrigger(){
