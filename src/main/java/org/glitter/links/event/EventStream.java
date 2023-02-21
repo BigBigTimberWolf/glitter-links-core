@@ -41,6 +41,9 @@ public class EventStream {
         Set<String> propertyNames = propertyValueMap.keySet();
         HashSet<Event> execEvents = new HashSet<>();
         for (String propertyName : propertyNames) {
+            if (!eventListen.get(deviceId).containsKey(propertyName)){
+                continue;
+            }
             List<Event> events = eventListen.get(deviceId).get(propertyName);
             execEvents.addAll(events);
         }

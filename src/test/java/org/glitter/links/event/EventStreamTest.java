@@ -16,7 +16,7 @@ class EventStreamTest {
         eventStream.setEventStore(buildEvent2());
         eventStream.setEventStore(buildEvent());
         SimpleValues simpleValues = new SimpleValues();
-        simpleValues.getAllValues().put("testProperty",new SimpleValue("1"));
+        simpleValues.getAllValues().put("testProperty111",new SimpleValue("1"));
         simpleValues.getAllValues().put("testProperty2",new SimpleValue("1"));
         eventStream.touch("test",simpleValues)
                 .subscribe(event -> log.info("执行:{}",event.getId()));
